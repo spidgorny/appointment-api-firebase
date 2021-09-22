@@ -1,11 +1,22 @@
 import * as functions from "firebase-functions";
-// import { getDatabase, onValue, ref } from "firebase/database";
-import { initializeApp } from "firebase/app";
+import { getDatabase, onValue, ref } from "firebase/database";
+// import { initializeApp } from "firebase/app";
 import admin from "firebase-admin";
 import { Tenant } from "./tenant";
 import express = require("express");
 
+require("dotenv").config();
+
 export const firebaseConfig = {
+	...{
+		apiKey: "AIzaSyD44aD5AdY1Fh4BBgGPRkiAM5jEBhN-8Mw",
+		authDomain: "experim8-assistant.firebaseapp.com",
+		databaseURL: "https://experim8-assistant.firebaseio.com",
+		projectId: "experim8-assistant",
+		storageBucket: "experim8-assistant.appspot.com",
+		messagingSenderId: "971332554341",
+		appId: "1:971332554341:web:33739170e6e68d327c408c",
+	},
 	credential: admin.credential.applicationDefault(),
 	databaseURL: "http://localhost:9000/?ns=experim8-assistant",
 };
@@ -13,8 +24,8 @@ admin.initializeApp();
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
-//
-export const helloWorld = functions.https.onRequest(
+
+export const helloWorld2 = functions.https.onRequest(
 	(request: express.Request, response) => {
 		functions.logger.info("Hello logs!", { structuredData: true });
 		const req = {
@@ -33,28 +44,14 @@ export const helloWorld = functions.https.onRequest(
 			body: request.body,
 			route: request.route,
 		};
-		response.json(req);
+		// const user = firebase.auth.getcurrentuser();
+		response.json({
+			req,
+			// user,
+		});
 	}
 );
 
-export const tenants = functions.https.onRequest((request, response) => {
-	return Tenant.route(request, response);
-});
-
-export const postTenants = functions.https.onRequest((request, response) => {
-	initializeApp(firebaseConfig);
-	const db = admin.database();
-	const ref = db.ref("tenants");
-	const usersRef = ref.child("users");
-	usersRef.set({
-		alanisawesome: {
-			date_of_birth: "June 23, 1912",
-			full_name: "Alan Turing",
-		},
-		gracehop: {
-			date_of_birth: "December 9, 1906",
-			full_name: "Grace Hopper",
-		},
-	});
-	response.json({ status: "nothing fetched" });
-});
+export const tenants = functions.https.onRequest((request, response) =>
+	Tenant.route(request, response)
+);
